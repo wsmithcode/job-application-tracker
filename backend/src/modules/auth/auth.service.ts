@@ -8,7 +8,8 @@ export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
   async login(loginDto: LoginDto) {
-    return loginDto;
+    await this.usersService.findUserByUsername(loginDto.username);
+    return 'login';
   }
 
   async signup(signupDto: SignupDto) {
@@ -17,6 +18,7 @@ export class AuthService {
   }
 
   async logout() {
+    await this.usersService.findUserByUsername('dummy');
     return 'logout';
   }
 }
