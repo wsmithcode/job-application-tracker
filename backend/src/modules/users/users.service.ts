@@ -27,11 +27,14 @@ export class UsersService {
     });
   }
 
-  async findUserByUsername(username: string): Promise<UserResponseDto | null> {
+  async findUserByUsername(username: string) {
     const user = await this.prisma.user.findUnique({ where: { username } });
-    return plainToInstance(UserResponseDto, user, {
-      excludeExtraneousValues: true,
-    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ${username} not found`);
+    }
+    //return plainToInstance(UserResponseDto, user, { excludeExtraneousValues: true});
+    return user;
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<UserResponseDto> {
