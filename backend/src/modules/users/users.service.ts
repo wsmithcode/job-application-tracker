@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException  } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { hashPassword } from '@/utils/bcrypt.util';
@@ -12,52 +12,44 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(): Promise<UserResponseDto[]> {
-    try {
-      const users = await this.prisma.user.findMany();
-      return users.map(user => plainToInstance(UserResponseDto, user, { excludeExtraneousValues: true}));
-    } catch (error) {
-      throw new Error('Error fetching users');
-    }
+    const users = await this.prisma.user.findMany();
+    return users.map((user) =>
+      plainToInstance(UserResponseDto, user, {
+        excludeExtraneousValues: true,
+      }),
+    );
   }
 
   async findUserById(id: string): Promise<UserResponseDto | null> {
-    try {
-      const user = await this.prisma.user.findUnique({ where: { id } });
-      return plainToInstance(UserResponseDto, user, { excludeExtraneousValues: true})
-    } catch (err) {
-      throw new Error('Error fetching user by ID');
-    }
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async findUserByUsername(username: string): Promise<UserResponseDto | null> {
-    try {
-      const user = await this.prisma.user.findUnique({ where: { username } });  
-      return plainToInstance(UserResponseDto, user, { excludeExtraneousValues: true})
-    } catch (err) {
-      throw new Error('Error fetching user by username')
-    }
+    const user = await this.prisma.user.findUnique({ where: { username } });
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    try {
-      const hashedPassword = await hashPassword(createUserDto.password);
-      const user = await this.prisma.user.create({
-        data: {
-          username: createUserDto.username,
-          email: createUserDto.email,
-          password: hashedPassword,
-        },
-      });
-      return user;
-    } catch (err) {
-      throw new Error('Error creating user');
-    }
+    const hashedPassword = await hashPassword(createUserDto.password);
+    const user = await this.prisma.user.create({
+      data: {
+        username: createUserDto.username,
+        email: createUserDto.email,
+        password: hashedPassword,
+      },
+    });
+    return user;
   }
 
   async ensureUserExist(id: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({ 
+    const user = await this.prisma.user.findUnique({
       where: { id },
-      select: { id: true} 
+      select: { id: true },
     });
 
     if (!user) {
@@ -65,29 +57,30 @@ export class UsersService {
     }
   }
 
-  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async updateUser(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
     await this.ensureUserExist(id);
 
-        const user = await this.prisma.user.update({
-          where: { id },
-          data: {
-            email: updateUserDto.email,
-            username: updateUserDto.username,
-            password: updateUserDto.password
-          },
-        });
-      return plainToInstance(UserResponseDto, user, { excludeExtraneousValues: true });
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: {
+        email: updateUserDto.email,
+        username: updateUserDto.username,
+        password: updateUserDto.password,
+      },
+    });
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async deleteUser(id: string): Promise<DeleteUserResponseDto> {
-    const user = await this.findUserById(id);
+    await this.ensureUserExist(id);
 
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
+    await this.prisma.user.delete({ where: { id } });
 
-      await this.prisma.user.delete({ where: { id } });
-
-      return { message: `User with ID ${id} deleted successfully` };
+    return { message: `User with ID ${id} deleted successfully` };
   }
 }

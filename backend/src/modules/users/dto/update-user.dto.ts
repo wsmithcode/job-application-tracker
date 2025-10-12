@@ -1,4 +1,10 @@
-import { IsEmail, IsString, IsNotEmpty, IsOptional, Length } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  Length,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class UpdateUserDto {

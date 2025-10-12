@@ -19,10 +19,7 @@ export class UsersController {
   }
 
   @Put(':id')
-  async update(
-    @Param('id' ) id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.users.updateUser(id, updateUserDto);
   }
 
@@ -30,5 +27,4 @@ export class UsersController {
   async delete(@Param('id') id: string) {
     return this.users.deleteUser(id);
   }
-
 }
