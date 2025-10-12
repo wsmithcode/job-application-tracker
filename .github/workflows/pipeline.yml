@@ -37,6 +37,7 @@ jobs:
     notification:
         runs-on: ubuntu-latest
         needs: [ 'lint']
+        if: always()
 
         steps:
             - name: Discord Notification
