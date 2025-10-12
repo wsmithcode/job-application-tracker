@@ -4,17 +4,15 @@ import { SignupDto } from './dto/signup.dto';
 
 @Injectable()
 export class AuthService {
-    
-    async login(loginDto: LoginDto) {
-        return loginDto
-    }
+  async login(loginDto: LoginDto) {
+    return loginDto;
+  }
 
-    async signup(signupDto: SignupDto) {
-        return signupDto;
-    }
+  async signup(signupDto: SignupDto) {
+    return signupDto;
+  }
 
-    async logout() {
-        return 'logout'
-    }
-
+  async logout() {
+    return 'logout';
+  }
 }

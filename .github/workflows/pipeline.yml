@@ -1,0 +1,47 @@
+name: Job Application Pipeline
+
+on: 
+    push:
+    pull_request:
+        branches:
+            - main
+            - develop
+
+jobs:
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+            
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                node-version: '18'
+
+            - name: Install Pnpm
+              run: npm install -g pnpm
+
+            - name: Install Dependencies
+              run: |
+                cd backend
+                pnpm install
+                
+            
+            - name: Run Lint
+              run: |
+                cd backend
+                pnpm lint
+
+    
+    notification:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Discord Notification
+              uses: sarisia/actions-status-discord@v1
+              if: always()
+              with:
+                webhook: ${{ secrets.DISCORD_WEBHOOK }}
+
+            
