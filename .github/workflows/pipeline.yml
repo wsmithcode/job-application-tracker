@@ -45,6 +45,5 @@ jobs:
               if: always()
               with:
                 webhook: ${{ secrets.DISCORD_WEBHOOK }}
-                status: ${{ job.status }}
-
+                status: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
             
