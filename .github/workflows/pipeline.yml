@@ -26,6 +26,7 @@ jobs:
               run: |
                 cd backend
                 pnpm install
+                npx prisma generate
                 
             
             - name: Run Lint
