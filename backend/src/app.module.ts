@@ -5,8 +5,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
-import { JwtStrategy } from "./modules/auth/strategy/jwt.strategy";
-import { JobResearchModule} from "@modules/job-research/job-research.module";
+import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
+import { JobResearchModule } from '@modules/job-research/job-research.module';
 
 @Module({
   imports: [
@@ -17,11 +17,9 @@ import { JobResearchModule} from "@modules/job-research/job-research.module";
       isGlobal: true,
       envFilePath: '.env',
     }),
-    JobResearchModule
+    JobResearchModule,
   ],
   controllers: [AppController],
-  providers: [AppService,
-      JwtStrategy
-  ],
+  providers: [AppService, JwtStrategy],
 })
 export class AppModule {}

@@ -12,7 +12,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async  validateUser(username: string, password: string) {
+  async validateUser(username: string, password: string) {
     const user = await this.usersService.findUserByUsername(username);
     await this.VerifyPassword(password, user.password);
 

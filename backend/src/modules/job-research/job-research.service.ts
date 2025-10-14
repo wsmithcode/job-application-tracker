@@ -1,80 +1,79 @@
-import { Injectable, NotFoundException} from '@nestjs/common';
-import { PrismaService} from "@modules/prisma/prisma.service";
-import { UsersService} from "@modules/users/users.service";
-import { CreateJobResearchDto} from "@modules/job-research/dtos/create-job-research.dto";
-import { UpdateJobResearchDto} from "@modules/job-research/dtos/update-job-research.dto";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '@modules/prisma/prisma.service';
+import { UsersService } from '@modules/users/users.service';
+import { CreateJobResearchDto } from '@modules/job-research/dtos/create-job-research.dto';
+import { UpdateJobResearchDto } from '@modules/job-research/dtos/update-job-research.dto';
 
 @Injectable()
 export class JobResearchService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly users: UsersService,
+  ) {}
 
-    constructor (
-        private readonly prisma: PrismaService,
-        private readonly users: UsersService
-    ) {}
+  async getJobResearches(userId: string) {
+    await this.users.ensureUserExist(userId);
 
-    async getJobResearches(userId: string) {
+    const userJobResearchs = await this.prisma.jobResearch.findMany({
+      where: { userId: userId },
+    });
 
-        await this.users.ensureUserExist(userId);
+    return userJobResearchs;
+  }
 
-        const userJobResearchs = await this.prisma.jobResearch.findMany({
-            where: { userId: userId }
-        });
+  async getJobResearchDetails(jobResearchId: string) {
+    const jobResearch = await this.prisma.jobResearch.findUnique({
+      where: { id: jobResearchId },
+    });
 
-        return userJobResearchs
+    return jobResearch;
+  }
+
+  async createJobResearch(
+    userId: string,
+    createJobResearchDto: CreateJobResearchDto,
+  ) {
+    const jobResearch = await this.prisma.jobResearch.create({
+      data: {
+        title: createJobResearchDto.title,
+        userId: userId,
+      },
+    });
+
+    return jobResearch;
+  }
+
+  async ensureJobResearchExistById(jobResearchId: string) {
+    const jobResearch = await this.getJobResearchDetails(jobResearchId);
+
+    if (!jobResearch) {
+      throw new NotFoundException('Job research does not exist');
     }
 
-    async getJobResearchDetails(jobResearchId: string) {
-        const jobResearch = await this.prisma.jobResearch.findUnique({
-            where: { id: jobResearchId}
-        })
+    return jobResearch;
+  }
 
-        return jobResearch;
-    }
+  async updateJobResearch(
+    jobResearchId: string,
+    updateJobResearchDto: UpdateJobResearchDto,
+  ) {
+    await this.ensureJobResearchExistById(jobResearchId);
 
-    async createJobResearch(userId: string, createJobResearchDto: CreateJobResearchDto) {
-        const jobResearch = await this.prisma.jobResearch.create({
-            data: {
-                title: createJobResearchDto.title,
-                userId: userId
-            }
-        });
+    const jobResearch = await this.prisma.jobResearch.update({
+      where: { id: jobResearchId },
+      data: {
+        title: updateJobResearchDto.title,
+      },
+    });
 
-        return jobResearch
-    }
+    return jobResearch;
+  }
 
-    async ensureJobResearchExistById(jobResearchId: string) {
-        const jobResearch = await this.getJobResearchDetails(jobResearchId);
+  async deleteJobResearch(jobResearchId: string) {
+    await this.ensureJobResearchExistById(jobResearchId);
 
-        if (! jobResearch) {
-            throw new NotFoundException("Job research does not exist");
-        }
-
-        return jobResearch;
-    }
-
-    async updateJobResearch(jobResearchId: string, updateJobResearchDto: UpdateJobResearchDto) {
-
-        await this.ensureJobResearchExistById(jobResearchId);
-
-        const jobResearch = await this.prisma.jobResearch.update({
-            where: { id: jobResearchId },
-            data: {
-                title: updateJobResearchDto.title
-            }
-        });
-
-        return jobResearch;
-    }
-
-    async deleteJobResearch(jobResearchId: string) {
-        await this.ensureJobResearchExistById(jobResearchId);
-
-        await this.prisma.jobResearch.delete({
-            where: { id: jobResearchId}
-        })
-    }
-
-
-
-
+    await this.prisma.jobResearch.delete({
+      where: { id: jobResearchId },
+    });
+  }
 }
