@@ -24,7 +24,7 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (!user) {
-        throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`User with id ${id} not found`);
     }
 
     return plainToInstance(UserResponseDto, user, {
@@ -54,17 +54,19 @@ export class UsersService {
     return user;
   }
 
-  async createAdminUser(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-      const hashedPassword = await hashPassword(createUserDto.password);
-        const user = await this.prisma.user.create({
-            data: {
-                username: createUserDto.username,
-                email: createUserDto.email,
-                password: hashedPassword,
-                role: 'ADMIN',
-            },
-        });
-        return user;
+  async createAdminUser(
+    createUserDto: CreateUserDto,
+  ): Promise<UserResponseDto> {
+    const hashedPassword = await hashPassword(createUserDto.password);
+    const user = await this.prisma.user.create({
+      data: {
+        username: createUserDto.username,
+        email: createUserDto.email,
+        password: hashedPassword,
+        role: 'ADMIN',
+      },
+    });
+    return user;
   }
 
   async ensureUserExist(id: string): Promise<void> {

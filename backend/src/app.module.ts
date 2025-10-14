@@ -5,9 +5,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD} from "@nestjs/core";
-import { JwtStrategy } from "./modules/auth/strategy/jwt.strategy";
-import { JwtGuard } from "./guards/jwt.guards";
+import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
+import { JobResearchModule } from '@modules/job-research/job-research.module';
 
 @Module({
   imports: [
@@ -18,10 +17,9 @@ import { JwtGuard } from "./guards/jwt.guards";
       isGlobal: true,
       envFilePath: '.env',
     }),
+    JobResearchModule,
   ],
   controllers: [AppController],
-  providers: [AppService,
-      JwtStrategy
-  ],
+  providers: [AppService, JwtStrategy],
 })
 export class AppModule {}
