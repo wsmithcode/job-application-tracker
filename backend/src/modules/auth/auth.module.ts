@@ -9,6 +9,7 @@ import { PrismaModule } from '@modules/prisma/prisma.module';
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { PrismaService } from '@modules/prisma/prisma.service';
+import { UsersModule } from '@modules/users/users.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { PrismaService } from '@modules/prisma/prisma.service';
         };
       },
     }),
+    UsersModule,
   ],
   controllers: [AuthController],
   providers: [
