@@ -3,11 +3,12 @@ import { JobResearchController} from "@modules/job-research/job-research.control
 import { JobResearchService} from "@modules/job-research/job-research.service";
 import { PrismaModule } from "@modules/prisma/prisma.module";
 import {PrismaService} from "@modules/prisma/prisma.service";
+import { UsersService} from "@modules/users/users.service";
 
 @Module({
     imports: [PrismaModule],
     controllers: [JobResearchController],
-    providers: [JobResearchService, PrismaService],
+    providers: [JobResearchService, PrismaService, UsersService],
     exports: [],
 })
 
