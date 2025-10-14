@@ -30,7 +30,7 @@ model JobResearch {
 
 model JobApplication {
   id            String      @id @default(uuid())
-  JobResearchId String
+  jobResearchId String
   title         String
   company       String
   location      String
@@ -40,7 +40,7 @@ model JobApplication {
   status        String
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt()
-  jobResearch   JobResearch @relation("JobResearchApplications", fields: [JobResearchId], references: [id], onDelete: Cascade)
+  jobResearch   JobResearch @relation("JobResearchApplications", fields: [jobResearchId], references: [id], onDelete: Cascade)
 }
 
 enum UserRole {
