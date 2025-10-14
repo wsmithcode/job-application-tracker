@@ -11,6 +11,9 @@ export class UserResponseDto {
   email: string;
 
   @Expose()
+  role: string;
+
+  @Expose()
   createdAt: Date;
 
   @Expose()

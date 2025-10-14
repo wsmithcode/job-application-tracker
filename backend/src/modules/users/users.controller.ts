@@ -1,7 +1,8 @@
-import { Controller, Param, Get, Put, Delete, Body } from '@nestjs/common';
+import { Controller, Param, Get, Post, Put, Delete, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -16,6 +17,15 @@ export class UsersController {
   @Get(':id')
   async findUserById(@Param('id') id: string) {
     return this.users.findUserById(id);
+  }
+
+  @Post('admin')
+  async createAdmin(@Body() createUserDto: CreateUserDto) {
+      const user = this.users.createAdminUser(createUserDto);
+      return {
+          message: "Admin user created successfully",
+          data: user
+      }
   }
 
   @Put(':id')

@@ -49,6 +49,19 @@ export class UsersService {
     return user;
   }
 
+  async createAdminUser(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+      const hashedPassword = await hashPassword(createUserDto.password);
+        const user = await this.prisma.user.create({
+            data: {
+                username: createUserDto.username,
+                email: createUserDto.email,
+                password: hashedPassword,
+                role: 'ADMIN',
+            },
+        });
+        return user;
+  }
+
   async ensureUserExist(id: string): Promise<void> {
     const user = await this.prisma.user.findUnique({
       where: { id },
