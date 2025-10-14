@@ -22,6 +22,11 @@ export class UsersService {
 
   async findUserById(id: string): Promise<UserResponseDto | null> {
     const user = await this.prisma.user.findUnique({ where: { id } });
+
+    if (!user) {
+        throw new NotFoundException(`User with id ${id} not found`);
+    }
+
     return plainToInstance(UserResponseDto, user, {
       excludeExtraneousValues: true,
     });
