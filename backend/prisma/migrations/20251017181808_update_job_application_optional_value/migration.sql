@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "JobApplication" ALTER COLUMN "location" DROP NOT NULL,
+ALTER COLUMN "travelTime" DROP NOT NULL,
+ALTER COLUMN "link" DROP NOT NULL,
+ALTER COLUMN "note" DROP NOT NULL;

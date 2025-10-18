@@ -33,10 +33,10 @@ model JobApplication {
   jobResearchId String
   title         String
   company       String
-  location      String
-  travelTime    String
-  link          String
-  note          String
+  location      String?
+  travelTime    Int?
+  link          String?
+  note          String?
   status        String
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt()

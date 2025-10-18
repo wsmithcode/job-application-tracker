@@ -7,7 +7,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
 import { JobResearchModule } from '@modules/job-research/job-research.module';
-import { JobApplicationModule } from "@modules/job-application/job-application.module";
+import { JobApplicationModule } from '@modules/job-application/job-application.module';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { JobApplicationModule } from "@modules/job-application/job-application.m
       envFilePath: '.env',
     }),
     JobResearchModule,
-    JobApplicationModule
+    JobApplicationModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],
