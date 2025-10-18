@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String        @id @default(uuid())
+  username    String        @unique
+  email       String        @unique
+  password    String
+  role        UserRole      @default(USER)
+  jobResearch JobResearch[] @relation("UserJobResearch")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt()
+}
+
+model JobResearch {
+  id              String           @id @default(uuid())
+  userId          String
+  title           String
+  jobApplications JobApplication[] @relation("JobResearchApplications")
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt()
+  user            User             @relation("UserJobResearch", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model JobApplication {
+  id                      String                    @id @default(uuid())
+  jobResearchId           String
+  title                   String
+  company                 String
+  location                String?
+  travelTime              Int?
+  link                    String?
+  note                    String?
+  status                  JobApplicationStatus      @default(APPLIED)
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt()
+  JobApplicationStatusLog JobApplicationStatusLog[] @relation("JobApplicationStatusLog")
+  jobResearch             JobResearch               @relation("JobResearchApplications", fields: [jobResearchId], references: [id], onDelete: Cascade)
+}
+
+model JobApplicationStatusLog {
+  id               String               @id @default(uuid())
+  jobApplicationId String
+  status           JobApplicationStatus @default(APPLIED)
+  createdAt        DateTime             @default(now())
+  jobApplication   JobApplication       @relation("JobApplicationStatusLog", fields: [jobApplicationId], references: [id], onDelete: Cascade)
+}
+
+enum JobApplicationStatus {
+  WHITELIST
+  APPLIED
+  ACCEPTED
+  DECLINED
+  REJECTED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}

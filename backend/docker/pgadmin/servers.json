@@ -1,0 +1,14 @@
+{
+    "servers": {
+        "1" : {
+            "Name": "Job Application Tracker",
+            "Group": "Servers",
+            "Host": "postgresql",
+            "Port": 5432,
+            "MaintenanceDB": "job-application-tracker",
+            "Username": "user",
+            "SSLMode": "prefer",
+            "Comment": "Job Application Tracker Database Connection"
+        }
+    }
+}
