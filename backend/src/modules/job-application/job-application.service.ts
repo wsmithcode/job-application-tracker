@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { JobResearchService } from '../job-research/job-research.service';
 import { CreateJobApplicationDto } from '@modules/job-application/dtos/create-job-application.dto';
-import { JobApplicationStatus } from '@/entities/job-application.entity';
 import { UpdateJobApplicationDto } from '@modules/job-application/dtos/update-job-application.dto';
+import { UpdateJobApplicationStatusDto } from '@modules/job-application/dtos/update-job-application-status.dto';
 
 @Injectable()
 export class JobApplicationService {
@@ -19,6 +23,9 @@ export class JobApplicationService {
       where: {
         jobResearchId: jobResearchId,
       },
+      include: {
+        JobApplicationStatusLog: true,
+      },
     });
 
     return jobApplications;
@@ -32,6 +39,9 @@ export class JobApplicationService {
       where: {
         id: jobApplicationId,
         jobResearchId: jobResearchId,
+      },
+      include: {
+        JobApplicationStatusLog: true,
       },
     });
 
@@ -50,7 +60,6 @@ export class JobApplicationService {
   ) {
     await this.jobResearch.ensureJobResearchExistById(jobResearchId);
 
-    const jobApplicationStatus = JobApplicationStatus.APPLIED;
     const createJobApplication = await this.prisma.jobApplication.create({
       data: {
         jobResearchId: jobResearchId,
@@ -60,7 +69,9 @@ export class JobApplicationService {
         travelTime: createJobApplicationDto?.travelTime,
         link: createJobApplicationDto?.link,
         note: createJobApplicationDto?.note,
-        status: jobApplicationStatus,
+        JobApplicationStatusLog: {
+          create: {},
+        },
       },
     });
 
@@ -87,11 +98,55 @@ export class JobApplicationService {
         travelTime: updateJobApplicationDto?.travelTime,
         link: updateJobApplicationDto?.link,
         note: updateJobApplicationDto?.note,
-        status: updateJobApplicationDto.status,
+      },
+      include: {
+        JobApplicationStatusLog: true,
       },
     });
 
     return updateJobApplication;
+  }
+
+  async updateJobApplicationStatus(
+    jobApplicationId: string,
+    jobResearchId: string,
+    updateJobApplicationStatusDto: UpdateJobApplicationStatusDto,
+  ) {
+    const jobApplicationDetail = await this.getJobApplicationDetail(
+      jobApplicationId,
+      jobResearchId,
+    );
+
+    if (
+      String(updateJobApplicationStatusDto.status) ===
+      String(jobApplicationDetail.status)
+    ) {
+      throw new BadRequestException(
+        `Job application is already in status: ${updateJobApplicationStatusDto.status}`,
+      );
+    }
+
+    const newStatus = updateJobApplicationStatusDto.status;
+
+    const update = await this.prisma.jobApplication.update({
+      where: {
+        id: jobApplicationId,
+        jobResearchId: jobResearchId,
+      },
+      data: {
+        status: newStatus,
+        JobApplicationStatusLog: {
+          create: {
+            status: newStatus,
+          },
+        },
+      },
+      include: {
+        JobApplicationStatusLog: true,
+      },
+    });
+
+    return update;
   }
 
   async deleteJobApplication(jobApplicationId: string, jobResearchId: string) {

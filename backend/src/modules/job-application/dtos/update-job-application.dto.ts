@@ -1,12 +1,5 @@
-import {
-  IsString,
-  IsNumber,
-  IsNotEmpty,
-  IsOptional,
-  IsEnum,
-} from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { JobApplicationStatus } from '@/entities/job-application.entity';
 
 export class UpdateJobApplicationDto {
   @IsString()
@@ -47,9 +40,4 @@ export class UpdateJobApplicationDto {
     typeof value === 'string' ? value.trim().toLowerCase() : value,
   )
   public readonly note: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @IsEnum(JobApplicationStatus)
-  public readonly status: string;
 }

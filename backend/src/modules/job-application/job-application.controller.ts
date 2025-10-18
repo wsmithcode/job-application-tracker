@@ -10,6 +10,7 @@ import {
 import { JobApplicationService } from './job-application.service';
 import { CreateJobApplicationDto } from '@modules/job-application/dtos/create-job-application.dto';
 import { UpdateJobApplicationDto } from '@modules/job-application/dtos/update-job-application.dto';
+import { UpdateJobApplicationStatusDto } from '@modules/job-application/dtos/update-job-application-status.dto';
 
 @Controller('job-research/:jobResearchId/job-application')
 export class JobApplicationController {
@@ -78,6 +79,24 @@ export class JobApplicationController {
       success: true,
       message: `Job applicatio with id ${id} is updated successfully`,
       data: jobApplicationUpdate,
+    };
+  }
+
+  @Put(':id/status')
+  async updateJobApplicationStatus(
+    @Param('id') id: string,
+    @Param('jobResearchId') JobResearchId: string,
+    @Body() updateJobApplicationStatus: UpdateJobApplicationStatusDto,
+  ) {
+    const JobApplicationStatus =
+      await this.jobApplication.updateJobApplicationStatus(
+        id,
+        JobResearchId,
+        updateJobApplicationStatus,
+      );
+
+    return {
+      data: JobApplicationStatus,
     };
   }
 
