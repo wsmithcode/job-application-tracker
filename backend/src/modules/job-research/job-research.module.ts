@@ -9,6 +9,6 @@ import { UsersService } from '@modules/users/users.service';
   imports: [PrismaModule],
   controllers: [JobResearchController],
   providers: [JobResearchService, PrismaService, UsersService],
-  exports: [],
+  exports: [JobResearchService],
 })
 export class JobResearchModule {}

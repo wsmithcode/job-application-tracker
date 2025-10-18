@@ -29,18 +29,35 @@ model JobResearch {
 }
 
 model JobApplication {
-  id            String      @id @default(uuid())
-  JobResearchId String
-  title         String
-  company       String
-  location      String
-  travelTime    String
-  link          String
-  note          String
-  status        String
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt()
-  jobResearch   JobResearch @relation("JobResearchApplications", fields: [JobResearchId], references: [id], onDelete: Cascade)
+  id                      String                    @id @default(uuid())
+  jobResearchId           String
+  title                   String
+  company                 String
+  location                String?
+  travelTime              Int?
+  link                    String?
+  note                    String?
+  status                  JobApplicationStatus      @default(APPLIED)
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt()
+  JobApplicationStatusLog JobApplicationStatusLog[] @relation("JobApplicationStatusLog")
+  jobResearch             JobResearch               @relation("JobResearchApplications", fields: [jobResearchId], references: [id], onDelete: Cascade)
+}
+
+model JobApplicationStatusLog {
+  id               String               @id @default(uuid())
+  jobApplicationId String
+  status           JobApplicationStatus @default(APPLIED)
+  createdAt        DateTime             @default(now())
+  jobApplication   JobApplication       @relation("JobApplicationStatusLog", fields: [jobApplicationId], references: [id], onDelete: Cascade)
+}
+
+enum JobApplicationStatus {
+  WHITELIST
+  APPLIED
+  ACCEPTED
+  DECLINED
+  REJECTED
 }
 
 enum UserRole {
